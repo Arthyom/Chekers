@@ -5,9 +5,10 @@ int main()
     /* crear un nuevo Tablero */
     Tablero * T1 = new Tablero();
 
-    T1->VerTablero();
-   int Menu1  = 1; //T1->MainMenu();
-  /// int Menu2 = T1->SecondMenu(Menu1);
+   int Menu1  = T1->MainMenu();
+   int Menu2 = T1->SecondMenu(Menu1);
+   T1->Instrucciones();
+
 
     cout<<endl<<endl;
 

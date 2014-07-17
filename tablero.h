@@ -6,6 +6,7 @@
 #include<cstring>
 #include<pieza.h>
 
+
     using namespace std;
 
 class Tablero
@@ -20,11 +21,13 @@ class Tablero
     public:
      Tablero();
 
-     void   VerTablero  ();
-     int    MainMenu    ();
-     int    SecondMenu  ( int MainMenu );
-     void   DibujarCaja (string Texto, int Espacios);
-     int *  Convertir   (int casilla);
+     void   VerTablero      ();
+     int    MainMenu        ();
+     int    SecondMenu      ( int MainMenu );
+     void   DibujarCaja     (string Texto, int Espacios);
+     int *  Convertir       (int casilla);
+     void   LimpiarPantalla ();
+     void   Instrucciones   ();
 
 };
 

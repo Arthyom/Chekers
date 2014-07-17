@@ -331,7 +331,6 @@ void Jugador::AmenazarReina(Tablero *T1)
 
 
 
-
 /*** muestra con un 'o' las casillas que puede ocupar una pieza cuando no es reina **/
 void Jugador::AmenazarNormal    (Tablero *T1)
 {
@@ -401,7 +400,35 @@ void Jugador::AmenazarNormal    (Tablero *T1)
 
 
 
+/*** imprime 1000 espacios en blanco en pantalla para imitar una instruccion "clear" ***/
+void Jugador::LimpiarPantalla()
+{
+    cout<<endl<<" | Presione cualquier tecla para continuar | "<<endl;
+    int a = 0;
+    cin>>a;
+    /* imprimir en pantalla como si de una matriz comun se tratara */
+    for( int i = 0; i < 1000 ; i ++ )
+    {
+        cout<<endl;
+        for( int j = 0 ; j < 1000 ;  j ++ )
+            cout<<' ';
+    }
+}
 
+
+
+
+/** recorre el tablero en busca de casillas con el simbolo 'o'
+*  de encontrarlas el metodo borra el simbolo y regresa la casilla
+*  a su estado neutral (con un epacio en blanco) **/
+void Jugador::BorrarAmenaza(Tablero *T1)
+{
+    /* recorrer el tablero en busca de circulos y borrarlos */
+    for( int i = 0 ; i < 8 ; i ++ )
+        for( int j = 0 ; j < 8 ; j++ )
+            if( T1->MatrizJuego[i][j].Color == 'o' )
+                T1->MatrizJuego[i][j].Color == ' ';
+}
 
 
 
