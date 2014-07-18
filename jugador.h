@@ -29,7 +29,7 @@ class Jugador
          int*   Seleccionar         (int Casilla, Tablero *T1);
 
          void   SoltarPieza         (Tablero *T1);
-         int    Amenazar            (Tablero *T1);
+         char   Amenazar           (Tablero *T1);
          void   Pactual             (int X, int Y);
          void   AmenazarNormal      (Tablero *T1);
          void   AmenazarReina       (Tablero *T1);

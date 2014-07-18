@@ -53,6 +53,7 @@
 /*** imprime el tablero ****/
 void  Tablero::VerTablero   ()
 {
+    int f = 1;
     /*imprimir el tablero fisico*/
     for(int i = 0 ; i < 8 ; i++)
     {
@@ -61,14 +62,25 @@ void  Tablero::VerTablero   ()
         for(int j = 0 ; j < 8 ; j++)
             cout<<"| "<<this->MatrizJuego[i][j].Color<<" ";
 
-        cout<<"        ";
+        cout<<"     ";
 
         /* parte para intrucciones */
-        for( int k = 0; k < 8 ; k ++)
-             cout<<"| "<< (k + 1) * (i + 1) <<" ";
+        for( int k = 0; k < 8 ; k ++, f++ )
+        {
+            /* es casilla non */
+            if( this->MatrizJuego[i][k].Color != ' ')
+            {
+                if( f < 10 )
+                    cout<<"|  "<<f<<" ";
+                else
+                      cout<<"| "<<f<<" ";
+
+            }
+            else
+                cout<<"|  "<<'_'<<" ";
+        }
     }
 }
-
 
 
 
@@ -95,10 +107,6 @@ int   Tablero::MainMenu     ()
 }
 
 
-
-
-
-
 /*** muestra el menu de seleccion de niveles, si se debe crear
 *    un jugador virtual ***/
 int   Tablero::SecondMenu   (int MainMenu)
@@ -110,13 +118,14 @@ int   Tablero::SecondMenu   (int MainMenu)
         this->DibujarCaja("  |Facil         [1]|",29);
         this->DibujarCaja("  |Medio         [2]|",29);
         this->DibujarCaja("  |Dificil       [3]|",29);
-    }
-    int opcion = 0 ;
-    cout<<endl;
-    cin>>opcion;
-   return opcion;
-}
 
+        int opcion = 0 ;
+        cout<<endl;
+        cin>>opcion;
+       return opcion;
+    }
+ return 0;
+}
 
 
 
@@ -166,21 +175,10 @@ void Tablero::LimpiarPantalla()
     int a = 0;
     cin>>a;
 
-    char son = '\a', ret = '\r';
-        /*enviar al principio */
-        for( int i = 0; i < 1000 ; i ++ )
-            cout<<son<<ret;
-
-
      /*imprimir en pantalla como si de una matriz comun se tratara */
-    for( int i = 0; i < 10 ; i ++ )
-    {
-        cout<<endl;
-        for( int j = 0 ; j < 100 ;  j ++ )
-            cout<<' ';
-    }
+    for( int i = 0; i < 20 ; i ++ )
+    cout<<endl;
 }
-
 
 
 
@@ -193,7 +191,11 @@ void Tablero::Instrucciones()
     cout<<endl
         <<" 1]  Puede usar las casilla que muestran numero (Ver imagen inferior)"<<endl
         <<" 2]  Escriba el numero de la casilla que desea usar "<<endl
-        << "3]  Se desplegaran circulos en las casillas que puede usar"<<endl;
+        <<" 3]  Se desplegaran circulos en las casillas que puede usar"<<endl
+        <<" 4]  Si no ve los circulos al seleccionar una pieza significa    que la pieza"<<endl
+        <<"     esta bloqueada  si esto ocurre use una pieza que no este bloqueada"<<endl;
 
     this->VerTablero();
+
+    this->LimpiarPantalla();
 }

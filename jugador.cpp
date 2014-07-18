@@ -7,15 +7,20 @@ Jugador::Jugador             ()
     this->Nombre    = " ";
     this->Pcapt     = 0;
     this->Plibres   = 12 ;
-    this->Color     = 'B';
+    this->Color     = ' ';
     this->Penemigas = 0;
 
 }
 
 void Jugador::Nombrar        ()
 {
-    this->DibujarCaja("| Escriba su nombre |", 10);
+    this->DibujarCaja("| Escriba su nombre |", 30);
     cin>>this->Nombre;
+
+    cout<<endl;
+
+    this->DibujarCaja(" Seleccione el color [ B / N ] )",25);
+    cin>>this->Color;
 
 }
 
@@ -202,8 +207,9 @@ int* Jugador::Seleccionar       (int Casilla, Tablero *T1)
 
 
 /** imprime en pantalla el tablero **/
-void Jugador::VerTablero        (Tablero * T1)
+void Jugador::VerTablero        (Tablero *T1)
 {
+    int f = 1;
     /*imprimir el tablero fisico*/
     for(int i = 0 ; i < 8 ; i++)
     {
@@ -212,7 +218,23 @@ void Jugador::VerTablero        (Tablero * T1)
         for(int j = 0 ; j < 8 ; j++)
             cout<<"| "<<T1->MatrizJuego[i][j].Color<<" ";
 
+        cout<<"     ";
 
+        /* parte para intrucciones */
+        for( int k = 0; k < 8 ; k ++, f++ )
+        {
+            /* es casilla non */
+            if( T1->MatrizJuego[i][k].Color != ' ')
+            {
+                if( f < 10 )
+                    cout<<"|  "<<f<<" ";
+                else
+                      cout<<"| "<<f<<" ";
+
+            }
+            else
+                cout<<"|  "<<'_'<<" ";
+        }
     }
 }
 
@@ -226,33 +248,37 @@ void Jugador::VerTablero        (Tablero * T1)
 void Jugador::Jugar             (Tablero *T1)
 {
     int Movimiento = 0 ;
+    this->VerTablero(T1);
+
     /* mientras no se haga un movimiento valido */
     while(!Movimiento)
     {
+
       /*conseguir una casilla valida */
-      cout<<endl<<"Seleccione una Ficha del tablero"<<endl;
-      int Cseleccionada = 0 ;
+      cout<<endl<<"Seleccione una Ficha de su mismo color"<<endl;
+      int Cseleccionada = 0;
       cin>> Cseleccionada;
+
       int *CoorXY = this->Seleccionar(Cseleccionada,T1);
       int x = CoorXY[0];
       int y = CoorXY[1];
 
-      /*mostrar el Tablero */
-      this->VerTablero(T1);
+
 
       /*Actualizar la ficha actual del jugador */
       this->Pactual(x,y);
 
      /* amenazar las casillas adecuadas */
-     int Respuesta = this->Amenazar(T1);
+     char Respuesta = this->Amenazar(T1);
 
-      if(Respuesta != 'S' || Respuesta != 's')
-      {
-            Movimiento = 1;
-            cout<<endl;
-      }
+      if(Respuesta == 'S' || Respuesta == 's')
+          this->SoltarPieza(T1);
+
      else
-         this->SoltarPieza(T1);
+      {
+          Movimiento = 1;
+          cout<<endl;
+      }
     }
 }
 
@@ -286,11 +312,8 @@ void Jugador::SoltarPieza       (Tablero *T1)
     this->ActualX = 0;
     this->ActualY = 0;
 
-    /** aqui parece tronar al soltar la pieza,no se por que, no le he depurado **/
-    this->VerTablero(T1);
-
-    /*** el metodo idealmente regresa a 'B' pero no elimina los circulos,
-     *   deberian ser removidos o refrescar todo el tablero ***/
+    /** recorrer el tablero y borrar amenazas **/
+    this->BorrarAmenaza(T1);
 
 
 }
@@ -300,18 +323,17 @@ void Jugador::SoltarPieza       (Tablero *T1)
 
 /*** mostrar en el tablero las casillas que una ficha seleccionada puede atacar
      se puede usar S/s para soltar la pieza y seleccionar otra    ***/
-int Jugador::Amenazar           (Tablero *T1)
+char Jugador::Amenazar           (Tablero *T1)
 {
     /* se puede amenazar posciciones como peon o como reina,
      * dependiendo del tipo de la pieza que se tenga seleccionada */
-
     if(T1->MatrizJuego[this->ActualY][this->ActualX].Tipo == 0)
         this->AmenazarNormal(T1);
     else
         this->AmenazarReina(T1);
 
     cout<<endl<<"Seleccione la casilla a ocupar | [ S/s ] para soltar pieza |"<<endl;
-          int Respuesta = 0 ;
+          char Respuesta = 0 ;
           cin>>Respuesta;
 
          return Respuesta;
@@ -338,6 +360,8 @@ void Jugador::AmenazarNormal    (Tablero *T1)
     int x = this->ActualX;
     int y = this->ActualY;
 
+    char ColoJugador = this->Color;
+
 
     /** ver que se pueda acceder a la las casillas mas
      * arriba de la actual [Superior derecha] **/
@@ -347,8 +371,8 @@ void Jugador::AmenazarNormal    (Tablero *T1)
         if( T1->MatrizJuego[y - 1][x + 1].Color == ' ' )
             T1->MatrizJuego[y - 1][x + 1].Color = 'o';
         else
-            if( this->ActualX + 2  &&  this->ActualY - 2 )
-                    if(  ( T1->MatrizJuego[ y - 2 ][ x + 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y - 1 ][ x + 1 ].Color == 'N') )
+            if( this->ActualX + 2 < 8 &&  this->ActualY - 2 >= 8 )
+                    if(  ( T1->MatrizJuego[ y - 2 ][ x + 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y - 1 ][ x + 1 ].Color == ColoJugador) )
                         T1->MatrizJuego[ y - 2 ][ x + 2 ].Color == 'o';
     }
 
@@ -360,8 +384,8 @@ void Jugador::AmenazarNormal    (Tablero *T1)
         if( T1->MatrizJuego[y + 1][x + 1].Color == ' ' )
             T1->MatrizJuego[y + 1][x + 1].Color = 'o';
         else
-            if( this->ActualX + 2  &&  this->ActualY + 2 )
-                    if(  ( T1->MatrizJuego[ y + 2 ][ x + 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y + 1 ][ x + 1 ].Color == 'N') )
+            if( this->ActualX + 2 < 8 &&  this->ActualY + 2 < 8 )
+                    if(  ( T1->MatrizJuego[ y + 2 ][ x + 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y + 1 ][ x + 1 ].Color == ColoJugador) )
                         T1->MatrizJuego[ y + 2 ][ x + 2 ].Color == 'o';
     }
 
@@ -373,27 +397,23 @@ void Jugador::AmenazarNormal    (Tablero *T1)
         if( T1->MatrizJuego[y - 1][x - 1].Color == ' ' )
             T1->MatrizJuego[y - 1][x - 1].Color = 'o';
         else
-            if( this->ActualX - 2  &&  this->ActualY - 2 )
-                    if(  ( T1->MatrizJuego[ y - 2 ][ x - 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y - 1 ][ x - 1 ].Color == 'N') )
+            if( this->ActualX - 2 >= 0 &&  this->ActualY - 2 >= 0 )
+                    if(  ( T1->MatrizJuego[ y - 2 ][ x - 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y - 1 ][ x - 1 ].Color == ColoJugador) )
                         T1->MatrizJuego[ y - 2 ][ x - 2 ].Color == 'o';
     }
 
 
     /** ver que se pueda acceder a la las casillas mas
      * abajo de la actual [inferior izquierda] **/
-
     if( this->ActualY + 1 < 8 && this->ActualX - 1 >= 0)
     {
         if( T1->MatrizJuego[y + 1][x - 1].Color == ' ' )
             T1->MatrizJuego[y + 1][x - 1].Color = 'o';
         else
-            if( this->ActualX - 2  &&  this->ActualY + 2 )
-                    if(  ( T1->MatrizJuego[ y + 2 ][ x - 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y + 1 ][ x - 1 ].Color == 'N') )
+            if( this->ActualX - 2 >= 0 &&  this->ActualY + 2 < 8 )
+                    if(  ( T1->MatrizJuego[ y + 2 ][ x - 2 ].Color == ' ')   &&   (T1->MatrizJuego[ y + 1 ][ x - 1 ].Color == ColoJugador) )
                         T1->MatrizJuego[ y + 2 ][ x - 2 ].Color == 'o';
     }
-
-
-
     this->VerTablero(T1);
 }
 
@@ -406,15 +426,11 @@ void Jugador::LimpiarPantalla()
     cout<<endl<<" | Presione cualquier tecla para continuar | "<<endl;
     int a = 0;
     cin>>a;
-    /* imprimir en pantalla como si de una matriz comun se tratara */
-    for( int i = 0; i < 1000 ; i ++ )
-    {
-        cout<<endl;
-        for( int j = 0 ; j < 1000 ;  j ++ )
-            cout<<' ';
-    }
-}
 
+     /*imprimir en pantalla como si de una matriz comun se tratara */
+    for( int i = 0; i < 20 ; i ++ )
+    cout<<endl;
+}
 
 
 
@@ -427,15 +443,12 @@ void Jugador::BorrarAmenaza(Tablero *T1)
     for( int i = 0 ; i < 8 ; i ++ )
         for( int j = 0 ; j < 8 ; j++ )
             if( T1->MatrizJuego[i][j].Color == 'o' )
-                T1->MatrizJuego[i][j].Color == ' ';
+                T1->MatrizJuego[i][j].Color = ' ';
+
+    cout<<endl<<endl<<endl;
+
+    this->VerTablero(T1);
 }
-
-
-
-
-
-
-
 
 
 
