@@ -276,6 +276,8 @@ void Jugador::Jugar             (Tablero *T1)
 
      else
       {
+          /*** aqui va el metodo para mover piezas ***/
+
           Movimiento = 1;
           cout<<endl;
       }
